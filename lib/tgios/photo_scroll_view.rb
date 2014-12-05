@@ -1,7 +1,6 @@
 module Tgios
   class PhotoScrollView < UIScrollView
-    attr_accessor :image
-    MAX_SCALE = 4.0
+    attr_accessor :image, :max_scale, :content_type, :min_content_type
 
     def init
       if super
@@ -11,6 +10,11 @@ module Tgios
         self.decelerationRate = UIScrollViewDecelerationRateFast
         self.delegate = self
         self.backgroundColor = :clear.uicolor
+        @max_scale = 4.0
+        @content_type = @min_content_type = :horizontal # :horizontal, :vertical, :fit, :fill
+
+        @image_view = PlasticCup::Base.style(UIImageView.new, contentMode: UIViewContentModeScaleAspectFit)
+        self.addSubview(@image_view)
       end
       self
     end
@@ -26,25 +30,25 @@ module Tgios
     def image=(image)
       super
       if image.is_a?(UIImage)
-        frame = self.frame
-        page_rect = CGRectMake(0, 0, image.size.width, image.size.height)
 
-        img_scale = frame.size.width / page_rect.size.width
-        fit_scale = frame.size.height / page_rect.size.height
-        fit_scale = img_scale if img_scale < fit_scale
+        fit_scale = get_scale(@content_type, image)
 
-        page_rect.size = CGSizeMake(page_rect.size.width * img_scale, page_rect.size.height * img_scale)
+        image_view_size = CGSizeMake(image.size.width * fit_scale, image.size.height * fit_scale)
 
-        @image_view = PlasticCup::Base.style(UIImageView.new,
-                                             image: image,
-                                             frame: page_rect,
-                                             contentMode: UIViewContentModeScaleAspectFit)
-        self.addSubview(@image_view)
+        #reset content
+        self.contentOffset = CGPointZero
+        self.zoomScale = 1.0
 
-        self.zoomScale = 0.995 if page_rect.size.height > frame.size.height
+        @image_view.image= image
+        @image_view.frame = [[0,0], [image_view_size.width, image_view_size.height]]
 
-        self.maximumZoomScale = MAX_SCALE / img_scale
-        self.minimumZoomScale = fit_scale / img_scale
+        #center image
+        self.contentOffset = CGPointMake((image_view_size.width - frame.size.width)/2.0, (image_view_size.height - frame.size.height)/2.0)
+
+        self.zoomScale = 0.995
+        self.maximumZoomScale = @max_scale / fit_scale
+        self.minimumZoomScale = get_scale(@min_content_type, image) / fit_scale
+
       end
     end
 
@@ -62,6 +66,23 @@ module Tgios
 
       end
 
+    end
+
+    def get_scale(type, image)
+      horizontal_scale = frame.size.width / image.size.width
+      vertical_scale = frame.size.height / image.size.height
+      case type
+        when :horizontal
+          horizontal_scale
+        when :vertical
+          vertical_scale
+        when :fit
+          [horizontal_scale, vertical_scale].min
+        when :fill
+          [horizontal_scale, vertical_scale].max
+        else
+          horizontal_scale
+      end
     end
 
     def viewForZoomingInScrollView(scrollView)
