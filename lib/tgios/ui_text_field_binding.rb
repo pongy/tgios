@@ -15,7 +15,7 @@ module Tgios
           extends: :decimal_button_common,
           frame: [[0, 163 + 44], [105, 54]],
           highlighted_background_image: Tgios::CommonUIUtility.imageFromColor(UIColor.colorWithRed(0.324, green: 0.352, blue: 0.402, alpha: 1)),
-          titleColor: :darkgray.uicolor,
+          titleColor: :dark_gray.uicolor,
           highlighted_title_color: :white.uicolor
       }, :ios6) unless Base.get_style_sheet(:decimal_button)
 
@@ -210,7 +210,7 @@ module Tgios
                                textColor: :red.uicolor,
                                backgroundColor: :clear.uicolor,
                                font: 'GillSans-Bold'.uifont(25),
-                               textAlignment: :center.uialignment,
+                               textAlignment: :center.nstextalignment,
                                text: '!',
                                tag: 888}
           error_label = Base.style(UILabel.new, error_label_styles)

@@ -16,7 +16,7 @@ module Tgios
         @label = Base.style(UILabel.new,
                             frame: self.bounds,
                             font: lambda {UIFont.systemFontOfSize(22)},
-                            textAlignment: :center.uialignment,
+                            textAlignment: :center.nstextalignment,
                             backgroundColor: :clear.uicolor,
                             textColor: :white.uicolor)
         @label.sizeToFit
