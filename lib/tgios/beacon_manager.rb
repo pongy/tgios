@@ -115,8 +115,8 @@ module Tgios
     def request_authorization(manager)
       if manager.respond_to?(:requestAlwaysAuthorization)
         status = CLLocationManager.authorizationStatus
-        if status == KCLAuthorizationStatusAuthorizedWhenInUse || status == KCLAuthorizationStatusDenied
-          title = (status == kCLAuthorizationStatusDenied) ? "Location services are off" : "Background location is not enabled"
+        if status != KCLAuthorizationStatusAuthorizedAlways
+          title = (status == KCLAuthorizationStatusDenied) ? "Location services are off" : "Background location is not enabled"
           message = "To use background location you must turn on 'Always' in the Location Services Settings"
 
           UIAlertView.alert(title, message: message)
