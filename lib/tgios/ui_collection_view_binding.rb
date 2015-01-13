@@ -51,6 +51,10 @@ module Tgios
       end
     end
 
+    def scrollViewDidScroll(scroll_view)
+      @events[:view_did_scroll].call(scroll_view) if @events[:view_did_scroll]
+    end
+
     def go_to_page(page, animated=false)
       frame = @collection_view.bounds
       frame.origin.x = frame.size.width * page
