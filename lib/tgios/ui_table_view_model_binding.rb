@@ -277,7 +277,7 @@ module Tgios
         height = @model.send(field_set[:name]).sizeWithFont(UIFont.systemFontOfSize(14),
                                                             constrainedToSize: [width, 9999],
                                                             lineBreakMode: UILineBreakModeCharacterWrap).height + 20
-        [height, 45].max
+        [height, 5].max
       else
         45
       end
